@@ -1,4 +1,4 @@
-// FETCH DATA FROM GITHUB API
+// USE BUILT-IN FETCH (NODE 18+)
 const username = process.env.GITHUB_USERNAME;
 
 async function getData() {
@@ -6,20 +6,16 @@ async function getData() {
 
   const repos = user.public_repos;
 
-  // PR count
   const prs = await fetch(`https://api.github.com/search/issues?q=author:${username}+type:pr`)
     .then(res => res.json());
 
-  const prCount = prs.total_count;
-
-  // Issues count
   const issues = await fetch(`https://api.github.com/search/issues?q=author:${username}+type:issue`)
     .then(res => res.json());
 
+  const prCount = prs.total_count;
   const issueCount = issues.total_count;
 
-  // FAKE commits workaround (GitHub API limitation)
-  const commits = prCount * 3;
+  const commits = prCount * 3; // APPROXIMATION
 
   const total = repos + prCount + issueCount + commits;
 
@@ -32,13 +28,22 @@ async function getData() {
 }
 
 getData().then(stats => {
-  const chartURL = `https://quickchart.io/chart?c={
-    type:'radar',
-    data:{
-      labels:['Repos','PRs','Issues','Commits'],
-      datasets:[{data:[${stats.repos},${stats.prs},${stats.issues},${stats.commits}]}]
+
+  const chartConfig = {
+    type: 'radar',
+    data: {
+      labels: ['Repos', 'PRs', 'Issues', 'Commits'],
+      datasets: [{
+        label: 'GitHub Activity',
+        data: [stats.repos, stats.prs, stats.issues, stats.commits]
+      }]
     }
-  }`;
+  };
+
+  // 🔥 THIS IS THE FIX
+  const encoded = encodeURIComponent(JSON.stringify(chartConfig));
+
+  const chartURL = `https://quickchart.io/chart?c=${encoded}`;
 
   console.log(chartURL);
 });
