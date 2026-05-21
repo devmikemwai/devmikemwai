@@ -1,5 +1,5 @@
-## GitHub Radar
+## Mike Mwai
 
 <!--RADAR_START-->
-![Radar](RADAR_CHART_URL)
+![Radar](loading...)
 <!--RADAR_END-->
