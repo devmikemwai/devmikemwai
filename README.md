@@ -1,3 +1,3 @@
 ## Mike Mwai
 
-![Radar](./radar.svg)
+<img src="./radar.svg" width="420" />
