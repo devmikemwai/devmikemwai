@@ -1,1 +1,3 @@
-![Radar Chart](RADAR_CHART_URL)
+## GitHub Radar
+
+![Radar](https://quickchart.io/chart?c={})
