@@ -28,7 +28,6 @@ async function getData() {
 }
 
 getData().then(stats => {
-
   const chartConfig = {
     type: 'radar',
     data: {
@@ -40,10 +39,8 @@ getData().then(stats => {
     }
   };
 
-  // 🔥 THIS IS THE FIX
   const encoded = encodeURIComponent(JSON.stringify(chartConfig));
 
-  const chartURL = `https://quickchart.io/chart?c=${encoded}`;
-
-  console.log(chartURL);
+  // ONLY OUTPUT ENCODED STRING (NOT FULL URL)
+  console.log(encoded);
 });
