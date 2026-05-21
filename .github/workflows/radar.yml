@@ -2,22 +2,26 @@ name: Update Radar Chart
 
 on:
   schedule:
-    - cron: "0 0 * * *"  # runs daily
+    - cron: "0 0 * * *"
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   update:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
 
-      - name: Run script
+      - name: Generate Radar Chart URL
         run: |
           node generate-radar.js > chart.txt
         env:
@@ -27,12 +31,16 @@ jobs:
         run: |
           CHART=$(cat chart.txt)
 
-          sed -i "s|RADAR_CHART_URL|$CHART|g" README.md
+          # REPLACE EXISTING QUICKCHART URL
+          sed -i "s|https://quickchart.io/chart?c=.*|$CHART|g" README.md
 
-      - name: Commit changes
+      - name: Configure Git
         run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit and Push
+        run: |
           git add README.md
-          git commit -m "Update radar chart" || echo "No changes"
+          git commit -m "Update radar chart" || echo "No changes to commit"
           git push
