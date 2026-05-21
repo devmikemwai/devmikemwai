@@ -21,23 +21,24 @@ jobs:
         with:
           node-version: 22
 
-      - name: Generate Encoded Chart Data
+      - name: Generate Chart Encoding
         run: |
-          ENCODED=$(node generate-radar.js)
+          ENCODED=$(node generate-radar.js | tr -d '\n\r')
           echo "$ENCODED" > chart.txt
         env:
           GITHUB_USERNAME: YOUR_USERNAME
 
-      - name: Build QuickChart URL
+      - name: Build Image URL
         run: |
           ENCODED=$(cat chart.txt)
+
           echo "https://quickchart.io/chart?format=svg&c=$ENCODED" > chart_url.txt
 
       - name: Update README
         run: |
-          CHART=$(cat chart_url.txt)
+          URL=$(cat chart_url.txt)
 
-          awk -v url="$CHART" '
+          awk -v url="$URL" '
           /<!--RADAR_START-->/ {print; print "![Radar](" url ")"; skip=1; next}
           /<!--RADAR_END-->/ {skip=0}
           !skip
@@ -48,8 +49,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Commit and Push
+      - name: Commit & Push
         run: |
           git add README.md
-          git commit -m "Update radar chart" || echo "No changes to commit"
+          git commit -m "Update radar chart" || echo "No changes"
           git push
