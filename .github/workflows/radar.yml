@@ -21,9 +21,12 @@ jobs:
         with:
           node-version: 22
 
-      - name: Generate SVG Card
+      - name: Generate SVG
         run: |
           node generate-radar-svg.js > radar.svg
+          echo "FILE CHECK:"
+          ls -lah radar.svg
+          cat radar.svg | head -n 5
         env:
           GITHUB_USERNAME: YOUR_USERNAME
 
@@ -33,5 +36,6 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           git add radar.svg
+
           git commit -m "Update radar card" || echo "No changes"
           git push
