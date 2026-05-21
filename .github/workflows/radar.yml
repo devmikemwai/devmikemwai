@@ -1,4 +1,4 @@
-name: Update Radar Chart
+name: Update Radar Card
 
 on:
   schedule:
@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup Node
@@ -21,36 +21,17 @@ jobs:
         with:
           node-version: 22
 
-      - name: Generate Chart Encoding
+      - name: Generate SVG Card
         run: |
-          ENCODED=$(node generate-radar.js | tr -d '\n\r')
-          echo "$ENCODED" > chart.txt
+          node generate-radar-svg.js > radar.svg
         env:
           GITHUB_USERNAME: YOUR_USERNAME
 
-      - name: Build Image URL
-        run: |
-          ENCODED=$(cat chart.txt)
-
-          echo "https://quickchart.io/chart?format=svg&c=$ENCODED" > chart_url.txt
-
-      - name: Update README
-        run: |
-          URL=$(cat chart_url.txt)
-
-          awk -v url="$URL" '
-          /<!--RADAR_START-->/ {print; print "![Radar](" url ")"; skip=1; next}
-          /<!--RADAR_END-->/ {skip=0}
-          !skip
-          ' README.md > README.tmp && mv README.tmp README.md
-
-      - name: Configure Git
+      - name: Commit SVG
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Commit & Push
-        run: |
-          git add README.md
-          git commit -m "Update radar chart" || echo "No changes"
+          git add radar.svg
+          git commit -m "Update radar card" || echo "No changes"
           git push
