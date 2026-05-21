@@ -1,3 +1,5 @@
 ## GitHub Radar
 
-![Radar](https://quickchart.io/chart?c={})
+<!--RADAR_START-->
+![Radar](RADAR_CHART_URL)
+<!--RADAR_END-->
