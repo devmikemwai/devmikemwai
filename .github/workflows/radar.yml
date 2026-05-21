@@ -21,23 +21,32 @@ jobs:
         with:
           node-version: 22
 
-      - name: Generate Radar Chart URL
+      - name: Generate Encoded Chart Data
         run: |
-          node generate-radar.js > chart.txt
+          ENCODED=$(node generate-radar.js)
+          echo "$ENCODED" > chart.txt
         env:
           GITHUB_USERNAME: YOUR_USERNAME
 
+      - name: Build QuickChart URL
+        run: |
+          ENCODED=$(cat chart.txt)
+          echo "https://quickchart.io/chart?format=svg&c=$ENCODED" > chart_url.txt
+
       - name: Update README
         run: |
-          CHART=$(cat chart.txt)
+          CHART=$(cat chart_url.txt)
 
-          # REPLACE EXISTING QUICKCHART URL
-          sed -i "s|https://quickchart.io/chart?c=.*|$CHART|g" README.md
+          awk -v url="$CHART" '
+          /<!--RADAR_START-->/ {print; print "![Radar](" url ")"; skip=1; next}
+          /<!--RADAR_END-->/ {skip=0}
+          !skip
+          ' README.md > README.tmp && mv README.tmp README.md
 
       - name: Configure Git
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Commit and Push
         run: |
