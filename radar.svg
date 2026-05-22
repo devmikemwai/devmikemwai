@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="200">
+  <rect width="100%" height="100%" fill="#0d1117" rx="12"/>
+
+  <text x="20" y="30" fill="#ffffff" font-size="16">GitHub Radar</text>
+
+  <text x="20" y="70" fill="#9ca3af" font-size="12">Repos   ░░░░░░░░░░ 0%</text>
+  <text x="20" y="100" fill="#9ca3af" font-size="12">PRs     ░░░░░░░░░░ 0%</text>
+  <text x="20" y="130" fill="#9ca3af" font-size="12">Issues  ░░░░░░░░░░ 0%</text>
+  <text x="20" y="160" fill="#9ca3af" font-size="12">Commits ░░░░░░░░░░ 0%</text>
+</svg>
