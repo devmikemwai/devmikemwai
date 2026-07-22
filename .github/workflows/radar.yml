@@ -1,41 +1,48 @@
-name: Update Radar Card
+name: Generate Language Radar
 
 on:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "0 */12 * * *"
+
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  update:
+  radar:
+
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+
+      - uses: lowlighter/metrics@latest
+
         with:
-          node-version: 22
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Generate SVG
-        run: |
-          node generate-radar-svg.js > radar.svg
-          echo "FILE CHECK:"
-          ls -lah radar.svg
-          cat radar.svg | head -n 5
+          user: devmikemwai
+
+          filename: radar.svg
+
+          base: ""
+
+          plugin_languages: yes
+          plugin_languages_sections: most-used
+          plugin_languages_limit: 8
+          plugin_languages_analysis_timeout: 15
+
+          plugin_topics: no
+
+          plugin_followup: no
+
+      - uses: crazy-max/ghaction-github-pages@v4
+
+        with:
+          target_branch: output
+          build_dir: .
+
         env:
-          GITHUB_USERNAME: YOUR_USERNAME
-
-      - name: Commit SVG
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          git add radar.svg
-
-          git commit -m "Update radar card" || echo "No changes"
-          git push
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
